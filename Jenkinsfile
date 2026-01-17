@@ -13,9 +13,15 @@ pipeline{
                 echo 'Code checked out successfully'
             }
         }
-        stage('Test'){
+        stage('Run Tests inside Docker Container'){
             steps{
-                echo 'Testing..'
+                sh '''
+                docker run --rm \
+                -v "$PWD:/app" \
+                -w /app \
+                python:3.9-slim \
+                sh -c "pip install -r requirements.txt && pytest"
+                '''
             }
         }
         stage('Deploy'){
