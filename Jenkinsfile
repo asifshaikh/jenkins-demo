@@ -24,9 +24,13 @@ pipeline{
                 '''
             }
         }
-        stage('Deploy'){
+        stage('Build docker image'){
             steps{
-                echo 'Deploying....'
+                sh '''
+                docker build -t ${IMAGE_NAME}:latest .
+                docker tag ${IMAGE_NAME}:latest ${DOCKERHUB_REPO}:latest
+                '''
+                echo 'Docker image built successfully'
             }
         }
         stage('Finish'){
