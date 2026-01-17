@@ -33,6 +33,17 @@ pipeline{
                 echo 'Docker image built successfully'
             }
         }
+        stage('Push to Docker Hub'){
+            steps{
+                withCredentials([usernamePassword(credentialsId:'dockerhubCreds', usernameVariable:'DOCKERHUB_USERNAME', passwordVariable:'DOCKERHUB_PASSWORD')]){
+                    sh '''
+                    echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+                    docker push ${DOCKERHUB_REPO}:latest
+                    '''
+                }
+            }
+        }
+
         stage('Finish'){
             steps{
                 echo 'Finished'
