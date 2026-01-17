@@ -43,11 +43,23 @@ pipeline{
                 }
             }
         }
-
-        stage('Finish'){
+        stage('Deploy to local Docker'){
             steps{
-                echo 'Finished'
+                sh '''
+                docker rm -f ${CONTAINER_NAME} || true
+                docker run -d --name ${CONTAINER_NAME} -p 5000:5000 ${DOCKERHUB_REPO}:latest
+                '''
+                echo 'Application deployed successfully'
             }
+        }
+        
+    }
+    post {
+        success {
+            echo "🚀 Full CI/CD pipeline completed successfully"
+        }
+        failure {
+            echo "❌ Pipeline failed"
         }
     }
 }
